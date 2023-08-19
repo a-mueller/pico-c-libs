@@ -10,3 +10,6 @@ Utility to help put the pico into deep sleep and wake up when either of two GPIO
 
 ### pico_sht45
 Very basic support for the SHT45, can just run the measure command.
+
+### pico_sgp40
+Ported code from Paul Clark @ SparkFun Electronics to work on the pico.
