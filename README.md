@@ -13,3 +13,6 @@ Very basic support for the SHT45, can just run the measure command.
 
 ### pico_sgp40
 Ported code from Paul Clark @ SparkFun Electronics to work on the pico.
+
+### pico_pcf8523
+Library for the PCF8523 RTC. Just supports my use cases (Read & Write time, alarm & countdown timer, interrupts to wake up my board).
