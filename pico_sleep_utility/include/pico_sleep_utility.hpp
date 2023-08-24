@@ -31,16 +31,19 @@
 #include "hardware/rosc.h"
 #include "hardware/clocks.h"
 #include "hardware/gpio.h"
+#include <iterator>
+using namespace std;
 
 class PicoSleepUtility{
     public:
         PicoSleepUtility();
         ~PicoSleepUtility();
-        void Init(int gpioClock, int gpioButton);
+        /* gpio high pin will be used to detect a high edge, gpio low pin to detect a low edge, set to -1 if unused */
+        void Init(int gpioHighPin, int gpioLowPin);
         void StartDeepSleep();
     private:
-        int _gpio_clock;
-        int _gpio_button;
+        int _low_pin;
+        int _high_pin;
         void EnableRosc(void);
         void GoDormant(void);
 

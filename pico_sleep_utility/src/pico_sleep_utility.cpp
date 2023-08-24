@@ -1,13 +1,14 @@
 #include "pico_sleep_utility.hpp"
 
 
+
 PicoSleepUtility::PicoSleepUtility(){}
 
 PicoSleepUtility::~PicoSleepUtility() {}
 
-void PicoSleepUtility::Init(int gpioClock, int gpioButton){
-    _gpio_clock = gpioClock;
-    _gpio_button = gpioButton;
+void PicoSleepUtility::Init(int gpioHighPin, int gpioLowPin){
+    _high_pin = gpioHighPin;
+    _low_pin = gpioLowPin;
 }
 
 void PicoSleepUtility::EnableRosc(void){
@@ -21,16 +22,26 @@ void PicoSleepUtility::EnableRosc(void){
 
 
 void PicoSleepUtility::GoDormant(void) {
-
-    gpio_set_dormant_irq_enabled(_gpio_clock, IO_BANK0_DORMANT_WAKE_INTE0_GPIO0_EDGE_HIGH_BITS, true);
-    gpio_set_dormant_irq_enabled(_gpio_button, IO_BANK0_DORMANT_WAKE_INTE0_GPIO0_EDGE_HIGH_BITS, true);
+    printf("Go dormant, high: %d, low: %d", _high_pin, _low_pin);
+    if (_high_pin != -1) {
+        gpio_set_dormant_irq_enabled(_high_pin, IO_BANK0_DORMANT_WAKE_INTE0_GPIO0_EDGE_HIGH_BITS, true);    
+    }
+    if (_low_pin != -1) {
+        gpio_set_dormant_irq_enabled(_low_pin, IO_BANK0_DORMANT_WAKE_INTE0_GPIO0_EDGE_LOW_BITS, true);    
+    }
+    
+    // gpio_set_dormant_irq_enabled(_gpio_button, IO_BANK0_DORMANT_WAKE_INTE0_GPIO0_EDGE_HIGH_BITS, true);
 
     xosc_dormant();
     // Execution stops here until woken up
 
     // Clear the irq so we can go back to dormant mode again if we want
-    gpio_acknowledge_irq(_gpio_clock, IO_BANK0_DORMANT_WAKE_INTE0_GPIO0_EDGE_HIGH_BITS);
-    gpio_acknowledge_irq(_gpio_button, IO_BANK0_DORMANT_WAKE_INTE0_GPIO0_EDGE_HIGH_BITS);
+    if (_high_pin != -1) {
+        gpio_acknowledge_irq(_high_pin, IO_BANK0_DORMANT_WAKE_INTE0_GPIO0_EDGE_HIGH_BITS);
+    }
+    if (_low_pin != -1) {
+        gpio_acknowledge_irq(_low_pin, IO_BANK0_DORMANT_WAKE_INTE0_GPIO0_EDGE_LOW_BITS);
+    }
 }
 
 void PicoSleepUtility::StartDeepSleep(){
